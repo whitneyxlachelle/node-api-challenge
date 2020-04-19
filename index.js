@@ -1,3 +1,19 @@
+const express = require('express');
+
+const server = express();
+const port = 3000; 
+
+server.use(express.json());
+
+server.use("/", (req, res) => {
+    res.send('API is running')
+});
+
+server.listen(port, () => {
+console.log(`API is running at http://localhost:${port}`)
+});
+
+
 /*
 play this: https://www.youtube.com/watch?v=d-diB65scQU
 
