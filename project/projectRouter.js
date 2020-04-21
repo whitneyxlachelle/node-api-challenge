@@ -20,16 +20,30 @@ router.get('/', (req, res) => {
 // Retrieves project by id
 router.get("/:id", validateProjectId(), (req, res) => {
     project.get(req.params.id)
-    .then((project) => {
-        res.status(200).json(project);
-    })
-    .catch((error) => {
-        console.log(error)
-        res.status(500).json({
-            message: "Error retrieving project.",
-        });
-    })
+        .then((project) => {
+            res.status(200).json(project);
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).json({
+                message: "Error retrieving project.",
+            });
+        })
 });
+
+// Retrieves list of actions
+router.get('/:id/action', validateProjectId(), (req, res) => {
+    project.getProjectActions(req.params.id)
+        .then((actions) => {
+                res.status(200).json(actions)
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).json({
+                message: "Error retrieving projects.",
+            });
+        })
+})
 
 // This will create a project
 router.post("/", validateProject(), (req, res) => {
@@ -46,7 +60,7 @@ router.post("/", validateProject(), (req, res) => {
 });
 
 // This will update project
-router.put('/:id', validateProjectId, validateProject, (req, res) => {
+router.put('/:id', validateProjectId(), validateProject(), (req, res) => {
     project.update(req.params.id, req.body)
         .then((project) => {
             res.status(200).json(project)
@@ -62,21 +76,23 @@ router.put('/:id', validateProjectId, validateProject, (req, res) => {
 // This will remove project
 router.delete('/:id', validateProjectId(), (req, res) => {
     project.remove(req.params.id)
-    .then((project) => {
-        res.status(200).json(project)
-    })
-    .catch((error) => {
-        console.log(error)
-        res.status(500).json({
-            message: "Error removing project.",
-        });
-    })
+        .then(() => {
+            res.status(200).json({
+                message: "Project was removed.",
+            })
+        })
+        .catch((error) => {
+            console.log(error)
+            res.status(500).json({
+                message: "Error removing project.",
+            });
+        })
 })
 
 // custome middleware
 function validateProjectId() {
     return (req, res, next) => {
-        project.getProjectActions(req.params.id)
+        project.get(req.params.id)
             .then((project) => {
                 if (project) {
                     req.project = project
